@@ -2,14 +2,33 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.html",
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.mp3",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "asset/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
+      "src": "/background.mp3",
+      "headers": {
+        "Content-Type": "audio/mpeg",
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
       "src": "/(.*)",
       "dest": "/app.html"
     }
   ]
-} 
+}
