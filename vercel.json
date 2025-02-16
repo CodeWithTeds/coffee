@@ -2,21 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "**",
+      "src": "app.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "asset/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/asset/background.mp3",
-      "headers": {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=31536000, immutable"
-      }
+      "src": "/",
+      "dest": "/app.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "src": "/asset/(.*)",
+      "dest": "/asset/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
     }
   ]
 } 
