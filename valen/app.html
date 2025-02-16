@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    
+    <!-- Add favicon links -->
+    <link rel="icon" type="image/png" href="asset/image.png">
+    <link rel="shortcut icon" type="image/png" href="asset/image.png">
+    <link rel="apple-touch-icon" href="asset/image.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        .cute-font {
+            font-family: 'Pacifico', cursive;
+        }
+
+        .roxborough-cf {
+            font-family: 'Roxborough CF', cursive;
+        }
+        
+        @keyframes typing {
+            0% { width: 0; opacity: 0; }
+            10% { opacity: 1; }
+            100% { width: 100%; opacity: 1; }
+        }
+        
+        .typing-animation {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 8s ease-in-out forwards;
+            margin: 0 auto;
+            letter-spacing: 4px;
+            display: inline-block;
+            opacity: 0;
+            width: 0;
+        }
+
+        @keyframes fadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        .content-fade-in {
+            opacity: 0;
+            animation: fadeIn 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 8s;
+        }
+
+        .music-control {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            left: auto;
+            transform: none;
+            opacity: 0;
+            animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: 3.5s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 200px;
+        }
+
+        .music-control:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 75, 110, 0.2);
+        }
+
+        .music-player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .music-title {
+            font-family: 'Pacifico', cursive;
+            color: #ff4b6e;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #ff4b6e, #ff758c);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 75, 110, 0.3);
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 75, 110, 0.4);
+        }
+
+        .play-icon {
+            display: inline;
+        }
+
+        .pause-icon {
+            display: none;
+        }
+
+        .music-control.playing .play-icon {
+            display: none;
+        }
+
+        .music-control.playing .pause-icon {
+            display: inline;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 75, 110, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4b6e, #ff758c);
+            width: 0;
+            animation: progressAnimation 48s linear infinite;
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        @media (max-width: 768px) {
+            .music-control {
+                bottom: 20px;
+                right: 20px;
+                width: 180px;
+            }
+        }
+
+        .music-message {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            color: #666;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .music-message.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes envelope-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .envelope-icon {
+            font-size: 1.2rem;
+            animation: envelope-bounce 1s ease infinite;
+        }
+
+        .music-message-text {
+            font-family: 'Pacifico', cursive;
+            color: #e11d48;
+        }
+
+        .grid {
+            opacity: 0;
+            transform: translateY(20px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backface-visibility: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .card-1 { animation: fadeIn 2s ease-out forwards; animation-delay: 9s; }
+        .card-2 { animation: fadeIn 2s ease-out forwards; animation-delay: 10s; }
+        .card-3 { animation: fadeIn 2s ease-out forwards; animation-delay: 11s; }
+        .card-4 { animation: fadeIn 2s ease-out forwards; animation-delay: 12s; }
+
+        .envelope-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .envelope-container.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .envelope {
+            background: #ff4b6e;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: all 0.4s ease;
+        }
+
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            border-style: solid;
+            border-width: 100px 150px;
+            border-color: #ff6b88 transparent transparent transparent;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope.clicked:before {
+            transform: rotateX(180deg);
+        }
+
+        .envelope:after {
+            content: '💌';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            z-index: 1;
+            transition: all 0.4s ease;
+        }
+
+        .envelope.clicked:after {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        .love-message {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(100%) scale(0.8);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            padding: 1rem;
+            z-index: 2;
+        }
+
+        .love-message.show {
+            transform: translateY(-50%) scale(1);
+            opacity: 1;
+        }
+
+        .message-text {
+            font-family: 'Pacifico', cursive;
+            color: #e11d48;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .love-message.show .message-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .love-message.show .message-text:nth-child(1) { transition-delay: 0.3s; }
+        .love-message.show .message-text:nth-child(2) { transition-delay: 0.5s; }
+        .love-message.show .message-text:nth-child(3) { transition-delay: 0.7s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: floatHeart 2s ease-out forwards;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .letter-modal {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            opacity: 0;
+        }
+
+        .modal-overlay.show .letter-modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ff4b6e;
+        }
+
+        .letter-content {
+            position: relative;
+            min-height: 400px;
+        }
+
+        .addresses {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .recipient-address {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .sender-address {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            text-transform: uppercase;
+            color: #ff4b6e;
+        }
+
+        .modal-envelope {
+            width: 300px;
+            height: 200px;
+            margin: 2rem auto;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ff4b6e;
+            border-radius: 5px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ff6b88;
+            clip-path: polygon(0 0, 50% 50%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            z-index: 2;
+        }
+
+        .modal-envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1;
+        }
+
+        .modal-envelope.open .envelope-content {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateY(-20px);
+        }
+
+        .letter-body {
+            text-align: center;
+            font-family: 'Pacifico', cursive;
+            color: #ff4b6e;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-top: 2rem;
+        }
+
+        .signature {
+            text-align: right;
+            margin-top: 2rem;
+            color: #ff4b6e;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .heart-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            z-index: 3;
+        }
+
+        .envelope {
+            background: #ff4b6e;
+            width: 300px;
+            height: 200px;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            border-style: solid;
+            border-width: 100px 150px;
+            border-color: #ff6b88 transparent transparent transparent;
+            transform-origin: top;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope:after {
+            content: '💌';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 to-red-100 min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="max-w-4xl mx-auto text-center space-y-8">
+        <div class="overflow-hidden text-center">
+            <h1 class="text-4xl md:text-6xl text-red-600 mb-8 cute-font typing-animation inline-block">
+                i'd rather
+            </h1>
+        </div>
+        
+        <div class="content-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-6 rounded-xl shadow-lg card-1">
+                    <p class="text-lg text-gray-800">
+                        I'd rather have bad times with you than good times with someone else...
+                    </p>
+                </div>
+                
+                <div class="card p-6 rounded-xl shadow-lg card-2">
+                    <p class="text-lg text-gray-800">
+                        I'd rather be beside you in a storm than safe and warm by myself...
+                    </p>
+                </div>
+                
+                <div class="card p-6 rounded-xl shadow-lg card-3">
+                    <p class="text-lg text-gray-800">
+                        I'd rather have hard times together than to have it easy apart...
+                    </p>
+                </div>
+                
+                <div class="card p-6 rounded-xl shadow-lg card-4">
+                    <p class="text-lg text-gray-800">
+                        I'd rather have the one who holds my heart ❤️
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="letter-modal">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div class="letter-content">
+                <h2 class="text-2xl text-red-600 mb-4 cute-font">My Valentine</h2>
+                <p class="text-gray-800 mb-4">
+                    I'd rather have bad times with you than good times with someone else.<br>
+                    I'd rather be beside you in a storm than safe and warm by myself.<br>
+                    I'd rather have hard times together than to have it easy apart.<br>
+                    I'd rather have the one who holds my heart. <br>
+                    <br>
+                    <span class="text-red-600 roxborough-cf text-right mt-8">Gusto kona madama ang pagod na masaya.</span> <br>
+                    <span class="text-red-600 roxborough-cf text-right mt-8">Gusto kona maranasan ang sabay na ligalig at pahinga.</span> <br>
+                    
+
+                </p>
+                <p class="text-red-600 cute-font text-right mt-8">
+                    With love ❤️
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="envelopeContainer" class="envelope-container">
+        <div id="envelope" class="envelope" onclick="showModal()"></div>
+    </div>
+
+    <div class="music-control">
+        <audio id="bgMusic" loop>
+            <source src="asset/background.mp3" type="audio/mpeg">
+        </audio>
+        <div class="music-player-header">
+            <p class="music-title">I'd Rather</p>
+            <span class="text-sm text-gray-500">Luther Vandross</span>
+        </div>
+        <div class="player-controls">
+            <button onclick="toggleMusic()" class="play-button">
+                <span class="play-icon">▶</span>
+                <span class="pause-icon">⏸</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        const musicControl = document.querySelector('.music-control');
+        let isPlaying = false;
+
+        function showModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.style.display = 'flex';
+            requestAnimationFrame(() => {
+                modalOverlay.classList.add('show');
+                audio.currentTime = 48;
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicControl.classList.add('playing');
+                });
+            });
+        }
+
+        function closeModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.classList.remove('show');
+            audio.pause();
+            isPlaying = false;
+            musicControl.classList.remove('playing');
+            setTimeout(() => {
+                modalOverlay.style.display = 'none';
+            }, 300);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicControl.classList.remove('playing');
+            } else {
+                audio.currentTime = 48;
+                audio.play().then(() => {
+                    musicControl.classList.add('playing');
+                });
+            }
+            isPlaying = !isPlaying;
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'modalOverlay') {
+                closeModal();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                envelopeContainer.classList.add('show');
+            }, 3000);
+        });
+
+        audio.addEventListener('play', () => {
+            isPlaying = true;
+            musicControl.classList.add('playing');
+        });
+
+        audio.addEventListener('pause', () => {
+            isPlaying = false;
+            musicControl.classList.remove('playing');
+        });
+    </script>
+</body>
+</html>
